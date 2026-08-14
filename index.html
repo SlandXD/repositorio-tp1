@@ -10,7 +10,6 @@
 
   <h1>Manipulação do DOM</h1>
 
-  <!-- 1. mostrarMensagem -->
   <section>
     <h2>1. Mostrar Mensagem</h2>
     <form onsubmit="return false">
@@ -20,7 +19,6 @@
     <p id="outputMensagem"></p>
   </section>
 
-  <!-- 2. alterarTamanhoFonte -->
   <section>
     <h2>2. Alterar Tamanho de Fonte</h2>
     <p id="textoFonte">Este texto muda de tamanho.</p>
@@ -30,7 +28,6 @@
     </form>
   </section>
 
-  <!-- 3. trocarImagem -->
   <section>
     <h2>3. Trocar Imagem</h2>
     <img id="imagem" src="https://picsum.photos/seed/gato/200/120" alt="Imagem">
@@ -39,7 +36,6 @@
     </form>
   </section>
 
-  <!-- 4. adicionarElemento -->
   <section>
     <h2>4. Adicionar Elemento</h2>
     <form onsubmit="return false">
@@ -49,7 +45,6 @@
     <ul id="lista"></ul>
   </section>
 
-  <!-- 5. contarCliques -->
   <section>
     <h2>5. Contar Cliques</h2>
     <form onsubmit="return false">
@@ -58,7 +53,6 @@
     <p id="outputCliques">Cliques: 0</p>
   </section>
 
-  <!-- 6. destacarTexto -->
   <section>
     <h2>6. Destacar Texto</h2>
     <p id="textoDestaque">Clique no botão para destacar este parágrafo.</p>
@@ -67,17 +61,16 @@
     </form>
   </section>
 
-  <!-- 7. validarFormulario (DESAFIO) -->
   <section>
     <h2>7. Validar Formulário (Desafio)</h2>
     <form id="formulario" onsubmit="validarFormulario(event)">
-      <input type="text"  id="nome"  placeholder="Seu nome">
+      <input type="text" id="nome" placeholder="Seu nome">
       <span class="erro" id="erroNome"></span>
 
       <input type="email" id="email" placeholder="seu@email.com">
       <span class="erro" id="erroEmail"></span>
 
-      <input type="text"  id="telefone" placeholder="(11) 99999-9999">
+      <input type="text" id="telefone" placeholder="(11) 99999-9999">
       <span class="erro" id="erroTelefone"></span>
 
       <button type="submit">Enviar</button>
