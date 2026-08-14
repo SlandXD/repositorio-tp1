@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atividade DOM</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>Manipulação do DOM</h1>
+
+  <!-- 1. mostrarMensagem -->
+  <section>
+    <h2>1. Mostrar Mensagem</h2>
+    <form onsubmit="return false">
+      <input type="text" id="inputMensagem" placeholder="Digite uma mensagem">
+      <button onclick="mostrarMensagem()">Exibir</button>
+    </form>
+    <p id="outputMensagem"></p>
+  </section>
+
+  <!-- 2. alterarTamanhoFonte -->
+  <section>
+    <h2>2. Alterar Tamanho de Fonte</h2>
+    <p id="textoFonte">Este texto muda de tamanho.</p>
+    <form onsubmit="return false">
+      <button onclick="alterarTamanhoFonte('aumentar')">A+</button>
+      <button onclick="alterarTamanhoFonte('diminuir')">A-</button>
+    </form>
+  </section>
+
+  <!-- 3. trocarImagem -->
+  <section>
+    <h2>3. Trocar Imagem</h2>
+    <img id="imagem" src="https://picsum.photos/seed/gato/200/120" alt="Imagem">
+    <form onsubmit="return false">
+      <button onclick="trocarImagem()">Trocar Imagem</button>
+    </form>
+  </section>
+
+  <!-- 4. adicionarElemento -->
+  <section>
+    <h2>4. Adicionar Elemento</h2>
+    <form onsubmit="return false">
+      <input type="text" id="inputItem" placeholder="Novo item da lista">
+      <button onclick="adicionarElemento()">Adicionar</button>
+    </form>
+    <ul id="lista"></ul>
+  </section>
+
+  <!-- 5. contarCliques -->
+  <section>
+    <h2>5. Contar Cliques</h2>
+    <form onsubmit="return false">
+      <button onclick="contarCliques()">Clique aqui</button>
+    </form>
+    <p id="outputCliques">Cliques: 0</p>
+  </section>
+
+  <!-- 6. destacarTexto -->
+  <section>
+    <h2>6. Destacar Texto</h2>
+    <p id="textoDestaque">Clique no botão para destacar este parágrafo.</p>
+    <form onsubmit="return false">
+      <button onclick="destacarTexto()">Destacar / Remover destaque</button>
+    </form>
+  </section>
+
+  <!-- 7. validarFormulario (DESAFIO) -->
+  <section>
+    <h2>7. Validar Formulário (Desafio)</h2>
+    <form id="formulario" onsubmit="validarFormulario(event)">
+      <input type="text"  id="nome"  placeholder="Seu nome">
+      <span class="erro" id="erroNome"></span>
+
+      <input type="email" id="email" placeholder="seu@email.com">
+      <span class="erro" id="erroEmail"></span>
+
+      <input type="text"  id="telefone" placeholder="(11) 99999-9999">
+      <span class="erro" id="erroTelefone"></span>
+
+      <button type="submit">Enviar</button>
+      <p id="outputFormulario"></p>
+    </form>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
