@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerenciador de Nomes</title>
+  <script src="https://unpkg.com/htmx.org@2.0.3"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: sans-serif;
+      background: #fff;
+      color: #111;
+      padding: 2rem;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.3rem;
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    section {
+      margin-bottom: 2rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid #999;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: #333;
+    }
+
+    button {
+      padding: 0.4rem 1rem;
+      border: 1px solid #333;
+      background: #fff;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    button:hover { background: #f0f0f0; }
+
+    .response-box {
+      border: 1px solid #ccc;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+      min-height: 2rem;
+      color: #333;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .response-box.success { border-color: #4a4; color: #262; }
+    .response-box.error   { border-color: #c44; color: #622; }
+    .response-box.info    { border-color: #aaa; color: #444; }
+
+    .indicator {
+      font-size: 0.8rem;
+      color: #666;
+      opacity: 0;
+      min-height: 1.2em;
+      margin-bottom: 0.25rem;
+    }
+    .indicator.visible { opacity: 1; }
+
+    hr { border: none; border-top: 1px solid #ddd; margin-bottom: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>Gerenciador de Nomes</h1>
+
+  <!-- SEÇÃO 1: Inserir nome -->
+  <section>
+    <h2>Inserir nome</h2>
+    <div class="input-row">
+      <input
+        type="text"
+        id="nomeInput"
+        name="nome"
+        placeholder="Digite um nome…"
+        autocomplete="off"
+      />
+      <button onclick="verificarEInserir()">Salvar</button>
+    </div>
+    <span class="indicator" id="loadingInsert">Aguardando…</span>
+    <div class="response-box" id="respostaInsert">A resposta do servidor aparecerá aqui.</div>
+  </section>
+
+  <hr />
+
+  <!-- SEÇÃO 3: Listar nomes -->
+  <section>
+    <h2>Listar todos os nomes</h2>
+    <button onclick="listarNomes()">Buscar nomes</button>
+    <span class="indicator" id="loadingLista">Carregando…</span>
+    <div class="response-box info" id="respostaLista">Os nomes cadastrados aparecerão aqui.</div>
+  </section>
+
+<script>
+  const API = 'https://ola-tp1.onrender.com';
+
+  async function verificarEInserir() {
+    const input       = document.getElementById('nomeInput');
+    const respostaDiv = document.getElementById('respostaInsert');
+    const loading     = document.getElementById('loadingInsert');
+    const nome        = input.value.trim();
+
+    if (!nome) {
+      setResposta(respostaDiv, 'error', '⚠️ Por favor, digite um nome antes de salvar.');
+      return;
+    }
+
+    loading.classList.add('visible');
+    setResposta(respostaDiv, '', 'Verificando se o nome já existe…');
+
+    try {
+      // 1️⃣  GET /existe?nome=...
+      const existeRes  = await fetch(`${API}/existe?nome=${encodeURIComponent(nome)}`);
+      const existeText = (await existeRes.text()).trim();
+
+      // A API pode retornar "true", "false", '"true"' ou '"false"'
+      const jaExiste = existeText === 'true' || existeText === '"true"';
+
+      if (jaExiste) {
+        setResposta(respostaDiv, 'info',
+          `ℹ️ O nome "${nome}" já está cadastrado. Nenhuma inserção necessária.`);
+        loading.classList.remove('visible');
+        return;
+      }
+
+      // 2️⃣  POST /nomes  { nome }
+      const insertRes  = await fetch(`${API}/nomes`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ nome })
+      });
+      const insertText = await insertRes.text();
+
+      setResposta(respostaDiv, 'success', `✅ Servidor respondeu: ${insertText}`);
+      input.value = '';
+    } catch (err) {
+      setResposta(respostaDiv, 'error', `❌ Erro na requisição: ${err.message}`);
+    } finally {
+      loading.classList.remove('visible');
+    }
+  }
+
+  function setResposta(el, tipo, texto) {
+    el.className = `response-box${tipo ? ' ' + tipo : ''}`;
+    el.textContent = texto;
+  }
+
+  // Salvar com Enter
+  document.getElementById('nomeInput')
+    .addEventListener('keydown', e => { if (e.key === 'Enter') verificarEInserir(); });
+
+  async function listarNomes() {
+    const respostaDiv = document.getElementById('respostaLista');
+    const loading     = document.getElementById('loadingLista');
+
+    loading.classList.add('visible');
+    respostaDiv.className = 'response-box info';
+    respostaDiv.textContent = 'Carregando…';
+
+    try {
+      const res  = await fetch(`${API}/nomes`);
+      const data = await res.text();
+
+      // Tenta parsear como JSON
+      let nomes;
+      try { nomes = JSON.parse(data); } catch { nomes = null; }
+
+      if (Array.isArray(nomes)) {
+        respostaDiv.textContent = nomes.length
+          ? nomes.join('\n')
+          : 'Nenhum nome cadastrado.';
+      } else {
+        respostaDiv.textContent = data || 'Nenhum nome cadastrado.';
+      }
+    } catch (err) {
+      respostaDiv.className = 'response-box error';
+      respostaDiv.textContent = `Erro na requisição: ${err.message}`;
+    } finally {
+      loading.classList.remove('visible');
+    }
+  }
+</script>
+</body>
+</html>
